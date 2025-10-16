@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Printing Machine Data - Bannu Enterprises</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      font-size: 13px;
+      margin: 0;
+      padding: 30px;
+      background: #fff;
+    }
+
+    .invoice-box {
+      width: 100%;
+      margin: auto;
+      margin-bottom: -13px;
+      border: 2px solid #000;
+      padding: 20px;
+      color: #000;
+      height: auto;
+      box-sizing: border-box;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      border-bottom: 1px solid #000;
+      padding-bottom: 5px;
+    }
+
+    .title {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .title h2 {
+      margin: 5px 0;
+      font-size: 20px;
+      color: #003366;
+      text-shadow: 0.5px 0.5px #ccc;
+    }
+
+    .title p {
+      margin: 2px 0;
+      font-weight: bold;
+    }
+
+    .address {
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .info-line {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .manual-input {
+      margin-top: 5px;
+      display: none;
+    }
+
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #003366;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #003366;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    #afterSubmitButtons {
+      display: none;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #invoiceBox, #invoiceBox * {
+        visibility: visible;
+      }
+      #invoiceBox {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body onload="initializeInvoice()">
+
+<div class="invoice-box" id="invoiceBox">
+  <div class="top-bar">
+    <div>GST No: 36AHKPA9847Q1ZI</div>
+    <div>Cell: 9440607963</div>
+  </div>
+  <div class="title">
+    <div style="background-color:#003366;color:white;display:inline-block;padding:3px 12px;font-weight:bold;border-radius:4px;">
+      PRINTING MACHINE DATA
+    </div>
+    <h2>BANNU ENTERPRISES</h2>
+    <p>MFGRS OF ALL TYPES OF NOTEBOOKS, LONG BOOKS, REGISTERS</p>
+  </div>
+
+  <div class="address"># 5-2-904, Rasal Abdullah, Osmangunj, Hyderabad.</div>
+  <div class="info-line">
+    <div><strong>Receipt No:</strong> <span id="invoiceNo"></span></div>
+    <div><strong>Date:</strong> <span id="invoiceDate"></span></div>
+  </div>
+
+  <!-- Form Fields -->
+  <div style="margin-top: 20px;">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Operator</label>
+        <select id="operator" onchange="toggleManualInput('operator')">
+          <option value="">Select Operator</option>
+          <option value="Bahadur">Bahadur</option>
+          <option value="other">Other (Manual Entry)</option>
+        </select>
+        <input type="text" id="manualOperator" class="manual-input" placeholder="Enter Operator Name">
+      </div>
+      
+      <div class="form-group">
+        <label>Machine</label>
+        <select id="machine" onchange="toggleManualInput('machine')">
+          <option value="">Select Machine</option>
+          <option value="New">New</option>
+          <option value="Old">Old</option>
+          <option value="other">Other (Manual Entry)</option>
+        </select>
+        <input type="text" id="manualMachine" class="manual-input" placeholder="Enter Machine Name">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Paper Company</label>
+      <select id="paperCompany" onchange="toggleManualInput('paperCompany')">
+        <option value="">Select Paper Company</option>
+        <option value="Andhra Write choice">Andhra Write choice</option>
+        <option value="Andhra Splendor">Andhra Splendor</option>
+        <option value="West Coast">West Coast</option>
+        <option value="Krishna Prabhas">Krishna Prabhas</option>
+        <option value="Godavari">Godavari</option>
+        <option value="other">Other (Manual Entry)</option>
+      </select>
+      <input type="text" id="manualPaperCompany" class="manual-input" placeholder="Enter Paper Company Name">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>GSM</label>
+        <select id="gsm" onchange="toggleManualInput('gsm')">
+          <option value="">Select GSM</option>
+          <option value="48">48</option>
+          <option value="50">50</option>
+          <option value="52">52</option>
+          <option value="54">54</option>
+          <option value="57">57</option>
+          <option value="58">58</option>
+          <option value="68">68</option>
+          <option value="other">Other (Manual Entry)</option>
+        </select>
+        <input type="text" id="manualGsm" class="manual-input" placeholder="Enter GSM Value">
+      </div>
+      
+      <div class="form-group">
+        <label>Weight (kg)</label>
+        <input type="number" id="weight" step="0.01">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Quality</label>
+      <select id="quality" onchange="toggleManualInput('quality')">
+        <option value="">Select Quality</option>
+        <option value="A Grade">A Grade</option>
+        <option value="B Grade">B Grade</option>
+        <option value="C Grade">C Grade</option>
+        <option value="Register">Register</option>
+        <option value="Graph">Graph</option>
+        <option value="other">Other (Manual Entry)</option>
+      </select>
+      <input type="text" id="manualQuality" class="manual-input" placeholder="Enter Quality">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Size</label>
+        <input type="text" id="size" placeholder="e.g., A4, A3">
+      </div>
+      
+      <div class="form-group">
+        <label>Type</label>
+        <select id="type" onchange="toggleManualInput('type')">
+          <option value="">Select Type</option>
+          <option value="Notebook">Notebook</option>
+          <option value="King Size">King Size</option>
+          <option value="Long Book">Long Book</option>
+          <option value="Jumbo">Jumbo</option>
+          <option value="XL Jumbo">XL Jumbo</option>
+          <option value="other">Other (Manual Entry)</option>
+        </select>
+        <input type="text" id="manualType" class="manual-input" placeholder="Enter Type">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cutoff</label>
+        <input type="text" id="cutoff">
+      </div>
+      
+      <div class="form-group">
+        <label>Ruling</label>
+        <select id="ruling" onchange="toggleManualInput('ruling')">
+          <option value="">Select Ruling</option>
+          <option value="Index">Index</option>
+          <option value="Plain">Plain</option>
+          <option value="S/R">S/R</option>
+          <option value="B/R">B/R</option>
+          <option value="D/R">D/R</option>
+          <option value="F/R">F/R</option>
+          <option value="Cheq/R">Cheq/R</option>
+          <option value="M/R">M/R</option>
+          <option value="OS/R">OS/R</option>
+          <option value="SplM/R">SplM/R</option>
+          <option value="SplB/R">SplB/R</option>
+          <option value="other">Other (Manual Entry)</option>
+        </select>
+        <input type="text" id="manualRuling" class="manual-input" placeholder="Enter Ruling">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Number of Sheets</label>
+        <input type="number" id="numberOfSheets">
+      </div>
+      
+      <div class="form-group">
+        <label>Ups</label>
+        <select id="ups" onchange="toggleManualInput('ups')">
+          <option value="">Select Ups</option>
+          <option value="2ups">2ups</option>
+          <option value="3ups">3ups</option>
+          <option value="4ups">4ups</option>
+          <option value="other">Other (Manual Entry)</option>
+        </select>
+        <input type="text" id="manualUps" class="manual-input" placeholder="Enter Ups Value">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+  <button id="submitBtn" onclick="submitData()">Submit Data</button>
+  <div id="afterSubmitButtons" style="display: none;">
+    <button onclick="window.print()">Print</button>
+    <button onclick="enableEditing()">Back to Edit</button>
+    <button onclick="saveData()">Save Data</button>
+    <button onclick="newEntry()">New Entry</button>
+  </div>
+</div>
+
+<script>
+  // Web App URL for saving data
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxKP4Dv0NgisCKTrr63Wq_FjvoBHFAD89_Exw_1ycaC6hpnevgbOSeAttud9Ed7LHu5/exec';
+  
+  // Web App URL for getting invoice number
+  const INVOICE_URL = 'https://script.google.com/macros/s/AKfycbxKP4Dv0NgisCKTrr63Wq_FjvoBHFAD89_Exw_1ycaC6hpnevgbOSeAttud9Ed7LHu5/exec';
+
+  let currentInvoiceNumber = 0;
+
+  // Toggle manual input fields
+  function toggleManualInput(fieldName) {
+    const selectElement = document.getElementById(fieldName);
+    const manualInput = document.getElementById('manual' + fieldName.charAt(0).toUpperCase() + fieldName.slice(1));
+    
+    if (selectElement.value === 'other') {
+      manualInput.style.display = 'block';
+    } else {
+      manualInput.style.display = 'none';
+      manualInput.value = '';
+    }
+  }
+
+  // Get field value (either from dropdown or manual input)
+  function getFieldValue(fieldName) {
+    const selectElement = document.getElementById(fieldName);
+    const manualInput = document.getElementById('manual' + fieldName.charAt(0).toUpperCase() + fieldName.slice(1));
+    
+    if (selectElement.value === 'other' && manualInput.value) {
+      return manualInput.value;
+    }
+    return selectElement.value || '';
+  }
+
+  async function initializeInvoice() {
+    const dateStr = new Date().toLocaleDateString('en-GB');
+    document.getElementById("invoiceDate").innerText = dateStr;
+    
+    try {
+      // Get the latest invoice number from Google Sheets
+      const response = await fetch(INVOICE_URL + '?action=getInvoiceNumber');
+      const data = await response.json();
+      
+      if (data.status === "success") {
+        currentInvoiceNumber = parseInt(data.lastInvoiceNumber) || 0;
+      } else {
+        // Fallback to localStorage if API fails
+        currentInvoiceNumber = parseInt(localStorage.getItem('lastInvoiceNumber') || "0");
+      }
+    } catch (error) {
+      console.log('Using localStorage for invoice number');
+      // Fallback to localStorage if fetch fails
+      currentInvoiceNumber = parseInt(localStorage.getItem('lastInvoiceNumber') || "0");
+    }
+    
+    const nextInvoiceNumber = (currentInvoiceNumber + 1).toString().padStart(5, '0');
+    document.getElementById("invoiceNo").innerText = nextInvoiceNumber;
+  }
+
+  function submitData() {
+    // No validation - all fields are optional
+    document.getElementById("submitBtn").style.display = "none";
+    document.getElementById("afterSubmitButtons").style.display = "block";
+
+    // Make fields read-only
+    document.querySelectorAll("input, select").forEach(input => {
+      input.setAttribute("readonly", true);
+      input.style.backgroundColor = '#f5f5f5';
+    });
+  }
+
+  function enableEditing() {
+    document.getElementById("submitBtn").style.display = "inline-block";
+    document.getElementById("afterSubmitButtons").style.display = "none";
+
+    document.querySelectorAll("input, select").forEach(input => {
+      input.removeAttribute("readonly");
+      input.style.backgroundColor = '';
+    });
+  }
+
+  function newEntry() {
+    location.reload();
+  }
+
+  async function saveData() {
+    const loadingIndicator = createLoadingIndicator('Saving data, please wait...');
+    
+    try {
+      // Collect form data using getFieldValue function
+      const formData = {
+        invoiceNo: document.getElementById("invoiceNo").innerText,
+        timeStamp: new Date().toLocaleString('en-IN'),
+        operator: getFieldValue('operator'),
+        machine: getFieldValue('machine'),
+        papercompany: getFieldValue('paperCompany'),
+        gsm: getFieldValue('gsm'),
+        weight: document.getElementById("weight").value || '',
+        quality: getFieldValue('quality'),
+        size: document.getElementById("size").value || '',
+        type: getFieldValue('type'),
+        cutoff: document.getElementById("cutoff").value || '',
+        rulling: getFieldValue('ruling'),
+        numberofsheets: document.getElementById("numberOfSheets").value || '',
+        ups: getFieldValue('ups')
+      };
+
+      console.log('Submitting data:', formData);
+
+      // Save to Google Sheets
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { 
+          "Content-Type": "application/json" 
+        },
+        body: JSON.stringify(formData)
+      });
+
+      // Update invoice number in localStorage
+      localStorage.setItem('lastInvoiceNumber', currentInvoiceNumber + 1);
+      
+      loadingIndicator.innerHTML = `
+        <div style="background:white; padding:20px; border-radius:5px; text-align:center;">
+          <div style="color:green; margin-bottom:10px;">✅ Data saved successfully!</div>
+          <div style="font-size:12px; margin-bottom:15px;">Invoice: ${formData.invoiceNo}</div>
+          <button onclick="closeLoading('${loadingIndicator.id}')" 
+                  style="padding:8px 16px; background:#003366; color:white; border:none; cursor:pointer; margin:5px;">
+            Close
+          </button>
+          <button onclick="location.reload()" 
+                  style="padding:8px 16px; background:#28a745; color:white; border:none; cursor:pointer; margin:5px;">
+            New Entry
+          </button>
+        </div>
+      `;
+
+    } catch (err) {
+      console.error("Error saving data:", err);
+      loadingIndicator.innerHTML = `
+        <div style="background:white; padding:20px; border-radius:5px; text-align:center;">
+          <div style="color:red; margin-bottom:10px;">Error saving data</div>
+          <button onclick="closeLoading('${loadingIndicator.id}')" 
+                  style="padding:8px 16px; background:#003366; color:white; border:none; cursor:pointer;">
+            Close
+          </button>
+        </div>
+      `;
+    }
+  }
+
+  function createLoadingIndicator(message) {
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.style.position = 'fixed';
+    loadingIndicator.style.top = '0';
+    loadingIndicator.style.left = '0';
+    loadingIndicator.style.width = '100%';
+    loadingIndicator.style.height = '100%';
+    loadingIndicator.style.backgroundColor = 'rgba(0,0,0,0.5)';
+    loadingIndicator.style.display = 'flex';
+    loadingIndicator.style.justifyContent = 'center';
+    loadingIndicator.style.alignItems = 'center';
+    loadingIndicator.style.zIndex = '9999';
+    
+    const loadingId = 'loading-' + Date.now();
+    loadingIndicator.id = loadingId;
+    
+    loadingIndicator.innerHTML = `
+      <div style="background:white; padding:20px; border-radius:5px; text-align:center;">
+        <div style="margin-bottom:10px;">${message}</div>
+        <div class="spinner"></div>
+      </div>
+    `;
+    document.body.appendChild(loadingIndicator);
+    
+    return loadingIndicator;
+  }
+
+  function closeLoading(id) {
+    const loadingDiv = document.getElementById(id);
+    if (loadingDiv) {
+      loadingDiv.remove();
+    }
+  }
+</script>
+</body>
+</html>
